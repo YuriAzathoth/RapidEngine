@@ -101,4 +101,4 @@ inline static void obj_vector_erase(VALUE_T, obj_vector(VALUE_T)* vector, unsign
 
 #define VECTOR_INIT(VALUE_T) VECTOR_DECL(VALUE_T) VECTOR_FUNC(VALUE_T)
 
-#endif OBJ_VECTOR_H
+#endif // OBJ_VECTOR_H

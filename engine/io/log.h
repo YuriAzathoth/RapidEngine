@@ -34,4 +34,4 @@ void log_close();
 
 void log_write(enum log_level_e log_level, const char* format, ...);
 
-#endif LOG_H
+#endif // LOG_H

@@ -151,4 +151,4 @@ inline static void hash_map_erase(VALUE_T, hash_map(VALUE_T)* map, hash_t key)		
 
 #define HASH_MAP_INIT(VALUE_T) HASH_MAP_DECL(VALUE_T) HASH_MAP_FUNC(VALUE_T)
 
-#endif HASH_MAP_H
+#endif // HASH_MAP_H

@@ -33,4 +33,4 @@ inline static unsigned long long strhash(const char* str)
 	return hash;
 }
 
-#endif STRHASH_H
+#endif // STRHASH_H

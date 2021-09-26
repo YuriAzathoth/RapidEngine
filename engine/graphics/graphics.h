@@ -43,4 +43,4 @@ void graphics_destroy(struct graphics* graphics);
 void graphics_frame_begin(struct graphics* graphics);
 void graphics_frame_end(struct graphics* graphics);
 
-#endif GRAPHICS_H
+#endif // GRAPHICS_H

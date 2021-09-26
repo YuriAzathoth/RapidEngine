@@ -31,4 +31,4 @@ void filesystem_destroy(struct filesystem* filesystem);
 int filesystem_package_load(struct filesystem* filesystem, const char* filename);
 int filesystem_package_close(struct filesystem* filesystem, const char* filename);
 
-#endif FILESYSTEM_H
+#endif // FILESYSTEM_H

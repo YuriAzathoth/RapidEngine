@@ -37,4 +37,4 @@ int engine_create(struct engine* engine);
 void engine_destroy(struct engine* engine);
 void engine_run(struct engine* engine);
 
-#endif ENGINE_H
+#endif // ENGINE_H

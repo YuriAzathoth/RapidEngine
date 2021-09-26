@@ -118,4 +118,4 @@ inline static void obj_queue_pop(VALUE_T, obj_queue(VALUE_T)* queue)											\
 
 #define QUEUE_INIT(VALUE_T) QUEUE_DECL(VALUE_T)	QUEUE_FUNC(VALUE_T)
 
-#endif OBJ_QUEUE_H
+#endif // OBJ_QUEUE_H

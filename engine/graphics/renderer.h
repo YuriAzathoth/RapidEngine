@@ -29,4 +29,4 @@ int renderer_create(struct renderer* renderer);
 void renderer_destroy(struct renderer* renderer);
 void renderer_draw(struct renderer* renderer);
 
-#endif RENDERER_H
+#endif // RENDERER_H
