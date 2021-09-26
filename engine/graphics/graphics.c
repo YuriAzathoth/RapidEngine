@@ -21,6 +21,26 @@
 #include "graphics.h"
 #include "io/log.h"
 
+enum buffer_index_e
+{
+	ATTRIB_ARRAY,
+	VERTEX_ARRAY,
+	ELEMENT_ARRAY
+};
+
+static const char* ERROR_STRINGS[] =
+{
+	"Invalid enum",
+	"Invalid value",
+	"Invalid operation",
+	"Stack overflow",
+	"Stack underflow",
+	"Out of memory",
+	"Invalid framebuffer operation",
+	"No error",
+	"Unknown error"
+};
+
 int graphics_create(struct graphics* graphics,
 					const char* title,
 					int width,
@@ -94,13 +114,75 @@ void graphics_destroy(struct graphics* graphics)
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-void graphics_frame_begin(struct graphics* graphics)
+void graphics_frame_begin(struct graphics* graphics) { glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); }
+
+void graphics_frame_end(struct graphics* graphics) { SDL_GL_SwapWindow(graphics->window); }
+
+void graphics_buffers_create(unsigned* buffers)
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glGenVertexArrays(1, &buffers[ATTRIB_ARRAY]);
+	glGenBuffers(2, &buffers[VERTEX_ARRAY]);
 }
 
-void graphics_frame_end(struct graphics* graphics)
+void graphics_buffers_destroy(unsigned* buffers)
 {
-	log_write(LOG_LEVEL_TRACE, "Updating graphics...");
-	SDL_GL_SwapWindow(graphics->window);
+	glDeleteBuffers(2, &buffers[VERTEX_ARRAY]);
+	glDeleteVertexArrays(1, &buffers[ATTRIB_ARRAY]);
+}
+
+void graphics_buffers_load(unsigned* buffers,
+						   const float* vertices,
+						   const unsigned* indices,
+						   unsigned vertices_count)
+{
+	glBindVertexArray(buffers[ATTRIB_ARRAY]);
+
+	glBindBuffer(GL_ARRAY_BUFFER, buffers[VERTEX_ARRAY]);
+	glBufferData(GL_ARRAY_BUFFER, vertices_count * 3 * sizeof(float), vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[ELEMENT_ARRAY]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertices_count * sizeof(unsigned), indices, GL_STATIC_DRAW);
+
+	glBindVertexArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void graphics_draw(unsigned* buffers, unsigned vertices_count)
+{
+	glBindVertexArray(buffers[ATTRIB_ARRAY]);
+	glDrawElements(GL_TRIANGLES, vertices_count, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+}
+
+unsigned graphics_error_check()
+{
+	GLenum error;
+	unsigned success = 1;
+	while ((error = glGetError()) != GL_NO_ERROR)
+	{
+		log_write(LOG_LEVEL_ERROR, "OpenGL error: %s", graphics_error_string(error));
+		success = 0;
+	}
+	return !success;
+}
+
+const char* graphics_error_string(unsigned error_code)
+{
+	switch (error_code)
+	{
+	case GL_INVALID_ENUM:					return ERROR_STRINGS[0]; break;
+	case GL_INVALID_VALUE:					return ERROR_STRINGS[1]; break;
+	case GL_INVALID_OPERATION:				return ERROR_STRINGS[2]; break;
+	case GL_STACK_OVERFLOW:					return ERROR_STRINGS[3]; break;
+	case GL_STACK_UNDERFLOW:				return ERROR_STRINGS[4]; break;
+	case GL_OUT_OF_MEMORY:					return ERROR_STRINGS[5]; break;
+	case GL_INVALID_FRAMEBUFFER_OPERATION:	return ERROR_STRINGS[6]; break;
+	case GL_NO_ERROR:						return ERROR_STRINGS[7]; break;
+	default:								return ERROR_STRINGS[8]; break;
+	}
 }

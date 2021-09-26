@@ -20,7 +20,9 @@
 #define GRAPHICS_H
 
 #define GRAPHICS_INIT { 0, 0 }
+#define BUFFERS_COUNT 3
 
+typedef unsigned GEOMETRY_BUFFERS[BUFFERS_COUNT];
 typedef struct SDL_Window SDL_Window;
 typedef void *SDL_GLContext;
 
@@ -42,5 +44,16 @@ void graphics_destroy(struct graphics* graphics);
 
 void graphics_frame_begin(struct graphics* graphics);
 void graphics_frame_end(struct graphics* graphics);
+
+void graphics_buffers_create(unsigned* buffers);
+void graphics_buffers_destroy(unsigned* buffers);
+void graphics_buffers_load(unsigned* buffers,
+						   const float* vertices,
+						   const unsigned* indices,
+						   unsigned vertices_count);
+void graphics_draw(unsigned* buffers, unsigned vertices_count);
+
+unsigned graphics_error_check();
+const char* graphics_error_string(unsigned error_code);
 
 #endif // GRAPHICS_H

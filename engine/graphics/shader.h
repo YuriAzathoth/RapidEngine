@@ -16,21 +16,28 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <GL/glew.h>
-#include "renderer.h"
-#include "io/log.h"
+#ifndef SHADER_H
+#define SHADER_H
 
-int renderer_create(struct renderer* renderer)
-{
-	log_write(LOG_LEVEL_TRACE, "Creating renderer...");
-	return 0;
-}
+#define SHADER_INIT { 0 }
 
-void renderer_destroy(struct renderer* renderer)
+struct shader
 {
-	log_write(LOG_LEVEL_TRACE, "Destroying renderer...");
-}
+	unsigned program;
+};
 
-void renderer_draw(struct renderer* renderer)
+enum shader_type
 {
-}
+	SHADER_TYPE_VERTEX,
+	SHADER_TYPE_FRAGMENT
+};
+
+unsigned shader_compile(const char* text, size_t size, enum shader_type shader_type);
+void shader_release(unsigned shader);
+
+unsigned shader_create(unsigned vertex_shader, unsigned fragment_shader);
+int shader_destroy(unsigned program);
+
+void shader_use(unsigned program);
+
+#endif // SHADER_H
