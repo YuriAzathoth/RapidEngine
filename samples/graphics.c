@@ -78,7 +78,7 @@ int main(int argc, char** argv)
 	{
 		-0.5f, -0.5f, 0.0f,
 		-0.5f, 0.5f, 0.0f,
-		0.5f, -0.5f, 0.5f,
+		0.5f, -0.5f, 0.0f,
 		0.5f, 0.5f, 0.0f
 	};
 	const unsigned indices[] = { 0, 1, 2, 1, 2, 3 };
