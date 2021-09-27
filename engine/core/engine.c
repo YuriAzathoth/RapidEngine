@@ -32,11 +32,6 @@ int engine_create(struct engine* engine)
 	}
 	log_write(LOG_LEVEL_TRACE, "Creating engine...");
 	{
-		ret = filesystem_create(&engine->filesystem);
-		if (ret != 0)
-			return ret;
-	}
-	{
 		const char* title = "Rapid Engine";
 		const int width = 1024;
 		const int height = 768;
@@ -61,7 +56,6 @@ void engine_destroy(struct engine* engine)
 	log_write(LOG_LEVEL_TRACE, "Destroying engine...");
 	renderer_destroy(&engine->renderer);
 	graphics_destroy(&engine->graphics);
-	filesystem_destroy(&engine->filesystem);
 	log_close();
 }
 

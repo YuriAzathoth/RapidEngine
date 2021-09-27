@@ -21,13 +21,11 @@
 
 #include "graphics/graphics.h"
 #include "graphics/renderer.h"
-#include "io/filesystem.h"
 
 #define ENGINE_INIT { FILESYSTEM_INIT, GRAPHICS_INIT, RENDERER_INIT, 0 }
 
 struct engine
 {
-	struct filesystem filesystem;
 	struct graphics graphics;
 	struct renderer renderer;
 	int run;
