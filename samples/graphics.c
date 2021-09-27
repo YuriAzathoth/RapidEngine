@@ -17,6 +17,10 @@
 */
 
 #define SDL_MAIN_HANDLED
+#include <cglm/affine.h>
+#include <cglm/cam.h>
+#include <cglm/mat4.h>
+#include <cglm/quat.h>
 #include <SDL2/SDL.h>
 #include "graphics/graphics.h"
 #include "graphics/shader.h"
@@ -24,26 +28,24 @@
 static const char* VERTEX_SHADER =
 "#version 330 core\n"
 "\n"
-"layout(location = 0) in vec3 aPos;\n"
+"uniform mat4 cModel;\n"
+"uniform mat4 cViewProj;\n"
 "\n"
-"out vec4 vertexColor;\n"
+"layout(location = 0) in vec3 aPos;\n"
 "\n"
 "void main()\n"
 "{\n"
-"    gl_Position = vec4(aPos, 1.0);\n"
-"    vertexColor = vec4(aPos, 1.0);\n"
+"    gl_Position = cViewProj * cModel * vec4(aPos, 1.0);\n"
 "}\n";
 
 static const char* FRAGMENT_SHADER =
 "#version 330 core\n"
 "\n"
-"in vec4 vertexColor;\n"
-"\n"
 "out vec4 FragColor;\n"
 "\n"
 "void main()\n"
 "{\n"
-"    FragColor = vertexColor;\n"
+"    FragColor = vec4(0.0, 0.5, 1.0, 1.0);\n"
 "}\n";
 
 int main(int argc, char** argv)
@@ -68,21 +70,44 @@ int main(int argc, char** argv)
 	if (!shader || graphics_error_check())
 		return 1;
 
-	shader_use(shader);
-	if (graphics_error_check())
-		return 1;
+	struct uniforms uniforms = UNIFORMS_INIT;
+	shader_init(&uniforms, shader);
+
+	//    4-----------5          4-----5
+	//   /|          /|          |     |
+	//  / |         / |          |     |
+	// 0-----------1  |    4-----0-----1-----5-----4
+	// |  |        |  |    |     |     |     |     |
+	// |  6--------|--7    |     |     |     |     |
+	// | /         | /     6-----2-----3-----7-----6
+	// |/          |/            |     |
+	// 2-----------3             |     |
+	//                           6-----7
 
 	const float vertices[] =
 	{
-		-0.5f, -0.5f, 0.0f,
-		-0.5f, 0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		0.5f, 0.5f, 0.0f
+		-1.0f,  1.0f,  1.0f,	// 0
+		 1.0f,  1.0f,  1.0f,	// 1
+		-1.0f, -1.0f,  1.0f,	// 2
+		 1.0f, -1.0f,  1.0f,	// 3
+		-1.0f,  1.0f, -1.0f,	// 4
+		 1.0f,  1.0f, -1.0f,	// 5
+		-1.0f, -1.0f, -1.0f,	// 6
+		 1.0f, -1.0f, -1.0f		// 7
 	};
-	const unsigned indices[] = { 0, 1, 2, 1, 2, 3 };
+	const unsigned indices[] =
+	{
+		0, 1, 2, 1, 3, 2, // Front
+		5, 4, 7, 4, 6, 7, // Back
+		4, 0, 6, 0, 2, 6, // Left
+		1, 5, 3, 5, 7, 3, // Right
+		4, 5, 0, 5, 1, 0, // Top
+		2, 3, 6, 3, 7, 6  // Bottom
+	};
+	const unsigned vertices_count = sizeof(vertices) / sizeof(float) / 3;
+	const unsigned indices_count = sizeof(indices) / sizeof(unsigned);
 	GEOMETRY_BUFFERS buffers;
-	graphics_buffers_create(buffers);
-	graphics_buffers_load(buffers, vertices, indices, 6);
+	graphics_buffers_create(buffers, vertices, indices, vertices_count, indices_count);
 
 	SDL_Event event;
 	int run = 1;
@@ -96,7 +121,26 @@ int main(int argc, char** argv)
 		if (graphics_error_check())
 			return 1;
 
-		graphics_draw(buffers, 6);
+		vec3 model_position = { 0.0f, 0.0f, 0.0f };
+		vec3 camera_position = { 0.0f, 0.0f, 5.0f };
+
+		mat4 model = GLM_MAT4_IDENTITY_INIT;
+
+		versor model_rotation;
+		glm_rotate(model, (float)(SDL_GetTicks()) / 1000.0f, GLM_YUP);
+		glm_rotate(model, (float)(SDL_GetTicks()) / 5000.0f, GLM_XUP);
+		glm_translate(model, model_position);
+
+		mat4 view, proj, viewproj;
+		glm_lookat(camera_position, model_position, GLM_YUP, view);
+		glm_perspective(glm_rad(45.0f), 8.0f / 6.0f, 0.1f, 100.0f, proj);
+		glm_mat4_mul(proj, view, viewproj);
+
+		shader_use(shader);
+		shader_set_model(&uniforms, model[0]);
+		shader_set_viewproj(&uniforms, viewproj[0]);
+
+		graphics_draw(buffers, indices_count);
 
 		graphics_frame_end(&graphics);
 		if (graphics_error_check())

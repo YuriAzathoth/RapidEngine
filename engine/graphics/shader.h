@@ -19,11 +19,12 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#define SHADER_INIT { 0 }
+#define UNIFORMS_INIT { 0, 0 }
 
-struct shader
+struct uniforms
 {
-	unsigned program;
+	unsigned model;
+	unsigned viewproj;
 };
 
 enum shader_type
@@ -37,7 +38,10 @@ void shader_release(unsigned shader);
 
 unsigned shader_create(unsigned vertex_shader, unsigned fragment_shader);
 int shader_destroy(unsigned program);
-
 void shader_use(unsigned program);
+
+int shader_init(struct uniforms* uniforms, unsigned program);
+void shader_set_model(struct uniforms* uniforms, const float* model);
+void shader_set_viewproj(struct uniforms* uniforms, const float* viewproj);
 
 #endif // SHADER_H

@@ -80,3 +80,23 @@ unsigned shader_create(unsigned vertex_shader, unsigned fragment_shader)
 int shader_destroy(unsigned program) { glDeleteProgram(program); }
 
 void shader_use(unsigned program) { glUseProgram(program); }
+
+int shader_init(struct uniforms* uniforms, unsigned program)
+{
+	glUseProgram(program);
+	uniforms->model = glGetUniformLocation(program, "cModel");
+	uniforms->viewproj = glGetUniformLocation(program, "cViewProj");
+	glUseProgram(0);
+
+	return uniforms->model && uniforms->viewproj;
+}
+
+void shader_set_model(struct uniforms* uniforms, const float* model)
+{
+	glUniformMatrix4fv(uniforms->model, 1, GL_FALSE, model);
+}
+
+void shader_set_viewproj(struct uniforms* uniforms, const float* viewproj)
+{
+	glUniformMatrix4fv(uniforms->viewproj, 1, GL_FALSE, viewproj);
+}
