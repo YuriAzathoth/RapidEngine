@@ -20,6 +20,7 @@
 #define OBJ_QUEUE_H
 
 #include <stdlib.h>
+#include <string.h>
 
 #define obj_queue(VALUE_T) struct obj_queue_##VALUE_T
 

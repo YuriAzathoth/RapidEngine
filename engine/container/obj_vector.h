@@ -20,6 +20,7 @@
 #define OBJ_VECTOR_H
 
 #include <stdlib.h>
+#include <string.h>
 
 #define obj_vector(VALUE_T) struct obj_vector_##VALUE_T
 

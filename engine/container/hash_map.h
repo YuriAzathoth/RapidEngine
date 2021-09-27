@@ -20,6 +20,7 @@
 #define HASH_MAP_H
 
 #include <stdlib.h>
+#include <string.h>
 
 typedef unsigned long long hash_t;
 
