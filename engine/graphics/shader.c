@@ -21,7 +21,7 @@
 #include "io/log.h"
 #include "shader.h"
 
-unsigned shader_compile(const char* text, size_t size, enum shader_type shader_type)
+unsigned shader_compile(const char* text, enum shader_type shader_type)
 {
 	const GLenum SHADER_TYPES[] = { GL_VERTEX_SHADER, GL_FRAGMENT_SHADER };
 	const unsigned shader = glCreateShader(SHADER_TYPES[shader_type]);

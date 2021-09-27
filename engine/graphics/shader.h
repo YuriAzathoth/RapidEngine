@@ -32,7 +32,7 @@ enum shader_type
 	SHADER_TYPE_FRAGMENT
 };
 
-unsigned shader_compile(const char* text, size_t size, enum shader_type shader_type);
+unsigned shader_compile(const char* text, enum shader_type shader_type);
 void shader_release(unsigned shader);
 
 unsigned shader_create(unsigned vertex_shader, unsigned fragment_shader);

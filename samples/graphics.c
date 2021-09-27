@@ -21,8 +21,6 @@
 #include "graphics/graphics.h"
 #include "graphics/shader.h"
 
-#include <GL/glew.h>
-
 static const char* VERTEX_SHADER =
 "#version 330 core\n"
 "\n"
@@ -56,11 +54,11 @@ int main(int argc, char** argv)
 	if (ret || graphics_error_check())
 		return 1;
 
-	const unsigned vertex_shader = shader_compile(VERTEX_SHADER, sizeof(VERTEX_SHADER), SHADER_TYPE_VERTEX);
+	const unsigned vertex_shader = shader_compile(VERTEX_SHADER, SHADER_TYPE_VERTEX);
 	if (!vertex_shader || graphics_error_check())
 		return 1;
 
-	const unsigned fragment_shader = shader_compile(FRAGMENT_SHADER, sizeof(FRAGMENT_SHADER), SHADER_TYPE_FRAGMENT);
+	const unsigned fragment_shader = shader_compile(FRAGMENT_SHADER, SHADER_TYPE_FRAGMENT);
 	if (!fragment_shader || graphics_error_check())
 		return 1;
 
@@ -105,8 +103,8 @@ int main(int argc, char** argv)
 			return 1;
 	}
 
+	shader_destroy(shader);
 	graphics_buffers_destroy(buffers);
-
 	graphics_destroy(&graphics);
 
 	return 0;
