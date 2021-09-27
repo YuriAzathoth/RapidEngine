@@ -144,7 +144,6 @@ inline static void hash_map_erase(VALUE_T, hash_map(VALUE_T)* map, hash_t key)		
 	if (node->key)																							\
 	{																										\
 		node->key = 0;																						\
-		node->value = 0;																					\
 		--map->size;																						\
 	}																										\
 }
