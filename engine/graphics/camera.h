@@ -19,9 +19,15 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include <cglm/affine.h>
+#include <cglm/cam.h>
+#include <cglm/quat.h>
 #include <cglm/types.h>
+#include "core/common.h"
 
 #define CAMERA_INIT { GLM_MAT4_IDENTITY_INIT, GLM_MAT4_IDENTITY_INIT, GLM_QUAT_IDENTITY_INIT, GLM_VEC3_ZERO_INIT }
+
+#define camera_perspective(camera, fov, aspect, nearz, farz) glm_perspective(fov, aspect, nearz, farz, (camera)->proj)
 
 struct camera
 {
@@ -31,7 +37,16 @@ struct camera
 	vec3 position;
 };
 
-void camera_perspective(struct camera* camera, float fov, float aspect, float nearz, float farz);
-void camera_update(struct camera* camera);
+ENGINE_INLINE void camera_update(struct camera* camera)
+{
+	vec3 forward, up;
+	glm_quat_rotatev(camera->rotation, GLM_FORWARD, forward);
+	glm_quat_rotatev(camera->rotation, GLM_YUP, up);
+
+	mat4 view;
+	glm_look(camera->position, forward, up, view);
+
+	glm_mat4_mul_sse2(camera->proj, view, camera->viewproj);
+}
 
 #endif // CAMERA_H
