@@ -21,11 +21,13 @@
 extern void test_hash_map();
 extern void test_obj_queue();
 extern void test_obj_vector();
+extern void test_package();
 
 TEST_LIST =
 {
 	{ "Hash Map", test_hash_map },
 	{ "Object Queue", test_obj_queue },
 	{ "Object Vector", test_obj_vector },
+	{ "Package", test_package },
 	{ NULL, NULL }
 };
