@@ -18,10 +18,10 @@
 
 #define SDL_MAIN_HANDLED
 #include <cglm/affine.h>
-#include <cglm/cam.h>
 #include <cglm/mat4.h>
 #include <cglm/quat.h>
 #include <SDL2/SDL.h>
+#include "graphics/camera.h"
 #include "graphics/graphics.h"
 #include "graphics/shader.h"
 
@@ -73,6 +73,9 @@ int main(int argc, char** argv)
 	struct uniforms uniforms = UNIFORMS_INIT;
 	shader_init(&uniforms, shader);
 
+	struct camera camera = CAMERA_INIT;
+	camera_perspective(&camera, glm_rad(45.0f), 8.0f / 6.0f, 0.1f, 100.0f);
+
 	//    4-----------5          4-----5
 	//   /|          /|          |     |
 	//  / |         / |          |     |
@@ -121,24 +124,22 @@ int main(int argc, char** argv)
 		if (graphics_error_check())
 			return 1;
 
+		const float ticks = (float)(SDL_GetTicks());
+
 		vec3 model_position = { 0.0f, 0.0f, 0.0f };
-		vec3 camera_position = { 0.0f, 0.0f, 5.0f };
 
 		mat4 model = GLM_MAT4_IDENTITY_INIT;
-
-		versor model_rotation;
-		glm_rotate(model, (float)(SDL_GetTicks()) / 1000.0f, GLM_YUP);
-		glm_rotate(model, (float)(SDL_GetTicks()) / 5000.0f, GLM_XUP);
+		glm_rotate(model, ticks * 0.001f, GLM_YUP);
 		glm_translate(model, model_position);
 
-		mat4 view, proj, viewproj;
-		glm_lookat(camera_position, model_position, GLM_YUP, view);
-		glm_perspective(glm_rad(45.0f), 8.0f / 6.0f, 0.1f, 100.0f, proj);
-		glm_mat4_mul(proj, view, viewproj);
+		vec3 camera_position = { 0.0f, 0.0f, 5.0f };
+		glm_vec3_copy(camera_position, camera.position);
+
+		camera_update(&camera);
 
 		shader_use(shader);
 		shader_set_model(&uniforms, model[0]);
-		shader_set_viewproj(&uniforms, viewproj[0]);
+		shader_set_viewproj(&uniforms, camera.viewproj[0]);
 
 		graphics_draw(buffers, indices_count);
 
