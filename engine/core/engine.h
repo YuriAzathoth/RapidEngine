@@ -22,7 +22,7 @@
 #include "graphics/graphics.h"
 #include "graphics/renderer.h"
 
-#define ENGINE_INIT { FILESYSTEM_INIT, GRAPHICS_INIT, RENDERER_INIT, 0 }
+#define ENGINE_INIT { GRAPHICS_INIT, RENDERER_INIT, 0 }
 
 struct engine
 {
