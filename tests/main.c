@@ -22,6 +22,7 @@ extern void test_hash_map();
 extern void test_obj_queue();
 extern void test_obj_vector();
 extern void test_package();
+extern void test_tool_package();
 
 TEST_LIST =
 {
@@ -29,5 +30,6 @@ TEST_LIST =
 	{ "Object Queue", test_obj_queue },
 	{ "Object Vector", test_obj_vector },
 	{ "Package", test_package },
+	{ "Package Tool", test_tool_package },
 	{ NULL, NULL }
 };
