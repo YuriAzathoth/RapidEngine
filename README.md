@@ -1,2 +1,2 @@
 # RapidEngine
-Fast and cache-friendly C game engine (WIP)
+Experimental fast and cache-friendly C game engine (WIP)
