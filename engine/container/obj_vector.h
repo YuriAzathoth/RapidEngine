@@ -30,6 +30,9 @@
 #define obj_vector_back(VECTOR) obj_vector_end(VECTOR) - 1
 #define obj_vector_get(VECTOR, POSITION) ((VECTOR)->data + POSITION)
 
+#define obj_vector_foreach(VALUE_T, VECTOR, ITERATOR)															\
+for (VALUE_T* ITERATOR = obj_vector_begin(VECTOR); ITERATOR != obj_vector_end(VECTOR); ++ITERATOR)
+
 #define obj_vector_create(VALUE_T, VECTOR) obj_vector_##VALUE_T##_create(VECTOR)
 #define obj_vector_destroy(VALUE_T, VECTOR) obj_vector_##VALUE_T##_destroy(VECTOR)
 #define obj_vector_clear(VALUE_T, VECTOR) obj_vector_##VALUE_T##_clear(VECTOR)
