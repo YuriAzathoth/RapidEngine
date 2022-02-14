@@ -68,26 +68,26 @@ void octree_destroy(struct octree* octree)
 
 void octree_attach(struct octree* octree, vec3 box[2], unsigned model_id)
 {
-	struct octree_node* node = &octree->nodes[0];
+	struct octree_node* node = &octree->nodes.data[0];
 	while (node->leaf == -1)
-		node = &octree->nodes[node->children[get_child_id(node->box, box)]];
+		node = &octree->nodes.data[node->children[get_child_id(node->box, box)]];
 
-	octree_leaf_t* leaf = &octree->leafs[node->leaf];
-	if (leaf.size >= octree->max_objects)
+	octree_leaf_t* leaf = &octree->leafs.data[node->leaf];
+	if (leaf->size >= octree->max_objects)
 	{
-		const unsigned parent_id = (unsigned)(node - octree->nodes);
+		const unsigned parent_id = (unsigned)(node - octree->nodes.data);
 		unsigned child_id, child_leaf_id;
 		struct octree_node* child_node;
-		octree_leaf_t child_leaf;
+		octree_leaf_t* child_leaf;
 		for (unsigned i = 0; i < OCTREE_NODES_COUNT; ++i)
 		{
 			child_node = obj_vector_push(octree_node_t, &octree->nodes);
-			child_id = (unsigned)(child_node - octree->nodes);
+			child_id = (unsigned)(child_node - octree->nodes.data);
 			child_leaf = obj_vector_push(octree_leaf_t, &octree->leafs);
-			child_leaf_id = (unsigned)(child_leaf - octree->leafs);
+			child_leaf_id = (unsigned)(child_leaf - octree->leafs.data);
 			octree_node_init(child_node, child_id, parent_id, child_leaf_id, box);
 		}
-		obj_vector_foreach(octree_data_t, )
+//		obj_vector_foreach(octree_data_t, )
 		node->leaf = -1;
 	}
 }
